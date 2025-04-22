@@ -1,6 +1,6 @@
 package com.example.userservice.security.filter;
 
-import com.example.userservice.util.JwtUtil;
+import com.example.userservice.util.JWTUtility;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JWTUtility jwtUtil;
     private final UserDetailsService userDetailsService;
 
     @Override
