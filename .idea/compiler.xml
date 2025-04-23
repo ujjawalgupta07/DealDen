@@ -40,6 +40,16 @@
         </processorPath>
         <module name="api-gateway" />
       </profile>
+      <profile name="Annotation profile for user-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/unknown/spring-boot-configuration-processor-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="user-service" />
+      </profile>
       <profile name="Annotation profile for ecom-microservices-backend" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -61,16 +71,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="product-service" />
-      </profile>
-      <profile name="Annotation profile for user-service" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/unknown/spring-boot-configuration-processor-unknown.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-        </processorPath>
-        <module name="user-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
