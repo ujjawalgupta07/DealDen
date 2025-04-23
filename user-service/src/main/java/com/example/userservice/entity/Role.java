@@ -7,8 +7,6 @@ import lombok.*;
 @Table(name = "roles")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Role {
 
     @Id
@@ -20,5 +18,24 @@ public class Role {
 
     public Role(String user) {
         this.name = user;
+    }
+
+    public Role() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

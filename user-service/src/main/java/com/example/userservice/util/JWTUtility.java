@@ -4,28 +4,31 @@ import com.example.userservice.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.cglib.core.internal.Function;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JWTUtility {
 
-    private String SECRET_KEY = "yourSecretKey"; // It should be stored in a property or environment variable
+    private SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512); // It should be stored in a property or environment variable
 
     private long jwtExpirationInMs = 86400000; // 24 hours
 
     public String generateToken(Authentication authentication) {
         User userPrincipal = (User) authentication.getPrincipal();
+        System.out.println("Generated token for userPrincipal: " + userPrincipal.getEmail());
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -59,7 +62,7 @@ public class JWTUtility {
         final Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .build()
-                .parseClaimsJws(SECRET_KEY)
+                .parseClaimsJws(token)
                 .getBody();
         return claimsResolver.apply(claims);
     }

@@ -1,10 +1,13 @@
 package com.example.userservice.service;
 
+import com.example.userservice.entity.Role;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -14,19 +17,26 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String registerUser(User user) {
+    public String registerUser(String username, String password, String email, Set<Role> roles) {
         // Check if the username already exists
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(username).isPresent()) {
             return "Username already exists";
         }
 
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(email);
+        user.setRoles(roles);
+
         // Encode password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setPassword(passwordEncoder.encode(password));
 
         // Save user
         userRepository.save(user);
 
         return "User registered successfully";
     }
+
 }
 
