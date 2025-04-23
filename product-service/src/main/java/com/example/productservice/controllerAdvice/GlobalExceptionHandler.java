@@ -5,11 +5,16 @@ import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.InvalidProductIdException;
 import com.example.productservice.exception.ProductAlreadyExistsException;
 import com.example.productservice.exception.ProductNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.BadRequestException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -64,6 +69,22 @@ public class GlobalExceptionHandler {
                 ErrorDTO.builder()
                         .code("category_already_exists")
                         .message(exception.getMessage())
+                        .build();
+
+        return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDTO> handleValidationException(MethodArgumentNotValidException exception, HttpServletRequest request){
+        String message = exception.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+
+        ErrorDTO dto =
+                ErrorDTO.builder()
+                        .code("request_validation_failed")
+                        .message(message)
                         .build();
 
         return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
