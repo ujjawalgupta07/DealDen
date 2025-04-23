@@ -1,12 +1,12 @@
 package com.example.productservice.service.impl;
 
 
-import com.example.productservice.entity.Categories;
-import com.example.productservice.entity.Products;
+import com.example.productservice.entity.Category;
+import com.example.productservice.entity.Product;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.ProductAlreadyExistsException;
-import com.example.productservice.repository.ProductsRepo;
-import com.example.productservice.service.interfaces.CategoriesService;
+import com.example.productservice.repository.ProductRepository;
+import com.example.productservice.service.interfaces.CategoryService;
 import com.example.productservice.service.interfaces.ProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,17 +18,17 @@ import java.util.Objects;
 @Service("selfProductService")
 public class ProductServiceImpl implements ProductService {
 
-    ProductsRepo productsRepo;
-    CategoriesService categoriesService;
+    ProductRepository productRepository;
+    CategoryService categoryService;
 
-    ProductServiceImpl(ProductsRepo productsRepo, CategoriesService categoriesService){
-        this.productsRepo = productsRepo;
-        this.categoriesService = categoriesService;
+    ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService){
+        this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
-    public Products getProductById(Long id) {
-       Products product = productsRepo.findProductsById(id);
+    public Product getProductById(Long id) {
+       Product product = productRepository.findProductsById(id);
        if(Objects.nonNull(product)){
            return product;
        }
@@ -36,20 +36,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products createProduct(String productTitle, String description, String categoryTitle, String price, String image) throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
+    public Product createProduct(String productTitle, String description, String categoryTitle, String price, String image) throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
 
-        Products existingProduct = productsRepo.findProductsByTitle(productTitle);
+        Product existingProduct = productRepository.findProductsByTitle(productTitle);
         if(Objects.nonNull(existingProduct)){
             throw new ProductAlreadyExistsException("Product with same title already exists");
         }
 
-        Categories existingCategory = categoriesService.getCategoryByTitle(categoryTitle);
+        Category existingCategory = categoryService.getCategoryByTitle(categoryTitle);
         if(Objects.isNull(existingCategory)){
-            existingCategory = categoriesService.createCategories(categoryTitle);
+            existingCategory = categoryService.createCategory(categoryTitle);
         }
 
-        Products product =
-                Products.builder()
+        Product product =
+                Product.builder()
                                 .title(productTitle)
                                 .description(description)
                                 .imageUrl(image)
@@ -60,23 +60,23 @@ public class ProductServiceImpl implements ProductService {
         product.setIsDeleted("N");
         product.setCreatedAt(LocalDate.now());
 
-        return productsRepo.save(product);
+        return productRepository.save(product);
     }
 
     @Override
-    public List<Products> getAllProducts() {
-        List<Products> productsList = productsRepo.findProductsByIsDeleted("N");
-        if(CollectionUtils.isEmpty(productsList)){
+    public List<Product> getAllProducts() {
+        List<Product> productList = productRepository.findProductsByIsDeleted("N");
+        if(CollectionUtils.isEmpty(productList)){
             return new ArrayList<>();
         }
-        return productsList;
+        return productList;
     }
 
     @Override
-    public Products deleteProductById(Long productId) {
-        Products product = productsRepo.findProductsById(productId);
+    public Product deleteProductById(Long productId) {
+        Product product = productRepository.findProductsById(productId);
         if(Objects.nonNull(product)){
-            return productsRepo.updateIsDeletedById(productId);
+            return productRepository.updateIsDeletedById(productId);
         }
         return null;
     }

@@ -3,7 +3,7 @@ package com.example.productservice.controller;
 import com.example.productservice.builder.ProductMapper;
 import com.example.productservice.dto.request.CreateProductRequestDTO;
 import com.example.productservice.dto.response.ProductResponseDTO;
-import com.example.productservice.entity.Products;
+import com.example.productservice.entity.Product;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.InvalidProductIdException;
 import com.example.productservice.exception.ProductAlreadyExistsException;
@@ -41,7 +41,7 @@ public class ProductController {
             throws BadRequestException, ProductAlreadyExistsException, CategoryAlreadyExistsException {
 
         validateCreateProductRequest(createProductRequestDTO);
-        Products product = productService.createProduct(createProductRequestDTO.getTitle(),
+        Product product = productService.createProduct(createProductRequestDTO.getTitle(),
                 createProductRequestDTO.getDescription(),
                 createProductRequestDTO.getCategory(),
                 createProductRequestDTO.getPrice(),
@@ -65,13 +65,13 @@ public class ProductController {
 
     @GetMapping("/products")
     public List<ProductResponseDTO> getAllProducts(){
-        List<Products> productList = productService.getAllProducts();
+        List<Product> productList = productService.getAllProducts();
         if (CollectionUtils.isEmpty(productList)) {
             return null;
         }
 
         List<ProductResponseDTO> response = new ArrayList<>();
-        for (Products product : productList) {
+        for (Product product : productList) {
             response.add(productMapper.convertToProductResponseDTO(product));
         }
 
@@ -85,12 +85,12 @@ public class ProductController {
         if(null == productId){
            throw new InvalidProductIdException("Invalid Product Id.");
         }
-        Products products = productService.getProductById(Long.valueOf(productId));
+        Product product = productService.getProductById(Long.valueOf(productId));
 
-        if(Objects.isNull(products)){
+        if(Objects.isNull(product)){
             throw new ProductNotFoundException("Product not found.");
         }
-        return productMapper.convertToProductResponseDTO(products);
+        return productMapper.convertToProductResponseDTO(product);
     }
 
     @DeleteMapping("/product/{id}")
@@ -100,11 +100,11 @@ public class ProductController {
         if(null == productId){
             throw new InvalidProductIdException("Invalid Product Id.");
         }
-        Products products = productService.deleteProductById(productId);
+        Product product = productService.deleteProductById(productId);
 
-        if(Objects.isNull(products)){
+        if(Objects.isNull(product)){
             throw new ProductNotFoundException("Product not found.");
         }
-        return productMapper.convertToProductResponseDTO(products);
+        return productMapper.convertToProductResponseDTO(product);
     }
 }

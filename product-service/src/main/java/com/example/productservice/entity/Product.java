@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Products extends BaseModel {
+public class Product extends BaseModel {
 
     @Column(nullable = false)
     private String title;
@@ -22,5 +22,5 @@ public class Products extends BaseModel {
     private String imageUrl;
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "category_id", nullable = false)
-    private Categories category;
+    private Category category;
 }

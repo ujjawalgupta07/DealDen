@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Categories extends BaseModel {
+public class Category extends BaseModel {
 
     /**
      * 1. @Builder + @NoArgsConstructor for immutability and clean instantiation
@@ -28,6 +28,6 @@ public class Categories extends BaseModel {
 
     @JsonIgnore
     @OneToMany(mappedBy = "category" , cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<Products> products = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
 
 }

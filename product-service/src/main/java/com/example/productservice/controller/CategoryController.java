@@ -1,13 +1,13 @@
 package com.example.productservice.controller;
 
-import com.example.productservice.builder.CategoriesMapper;
+import com.example.productservice.builder.CategoryMapper;
 import com.example.productservice.dto.request.CreateCategoryRequestDTO;
 import com.example.productservice.dto.response.CategoryResponseDTO;
-import com.example.productservice.entity.Categories;
+import com.example.productservice.entity.Category;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.exception.InvalidCategoryIdException;
-import com.example.productservice.service.interfaces.CategoriesService;
+import com.example.productservice.service.interfaces.CategoryService;
 import io.micrometer.common.util.StringUtils;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-public class CategoriesController {
+public class CategoryController {
 
-    CategoriesService categoriesService;
-    CategoriesMapper categoriesMapper;
+    CategoryService categoryService;
+    CategoryMapper categoryMapper;
 
-    public CategoriesController(@Qualifier("categoriesServiceImpl") CategoriesService categoriesService, CategoriesMapper categoriesMapper) {
-        this.categoriesService = categoriesService;
-        this.categoriesMapper = categoriesMapper;
+    public CategoryController(@Qualifier("categoriesServiceImpl") CategoryService categoryService, CategoryMapper categoryMapper) {
+        this.categoryService = categoryService;
+        this.categoryMapper = categoryMapper;
     }
 
     @PostMapping("/category")
@@ -34,9 +34,9 @@ public class CategoriesController {
             throws BadRequestException, CategoryAlreadyExistsException {
 
         validateCreateCategoryRequest(createCategoryRequestDTO);
-        Categories category = categoriesService.createCategories(createCategoryRequestDTO.getTitle());
+        Category category = categoryService.createCategory(createCategoryRequestDTO.getTitle());
 
-        return categoriesMapper.convertToCategoryResponseDTO(category);
+        return categoryMapper.convertToCategoryResponseDTO(category);
     }
 
     private void validateCreateCategoryRequest(CreateCategoryRequestDTO createCategoryRequestDTO) throws BadRequestException {
@@ -47,15 +47,15 @@ public class CategoriesController {
 
     @GetMapping("/categories")
     public List<CategoryResponseDTO> getAllCategories(){
-        List<Categories> categoriesList = categoriesService.getAllCategories();
+        List<Category> categoryList = categoryService.getAllCategories();
 
-        if (CollectionUtils.isEmpty(categoriesList)) {
+        if (CollectionUtils.isEmpty(categoryList)) {
             return null;
         }
 
         List<CategoryResponseDTO> response = new ArrayList<>();
-        for (Categories category : categoriesList) {
-            response.add(categoriesMapper.convertToCategoryResponseDTO(category));
+        for (Category category : categoryList) {
+            response.add(categoryMapper.convertToCategoryResponseDTO(category));
         }
 
         return response;
@@ -68,12 +68,12 @@ public class CategoriesController {
         if(null == categoryId){
             throw new InvalidCategoryIdException("Invalid Category Id.");
         }
-        Categories category = categoriesService.getCategoryById(Long.valueOf(categoryId));
+        Category category = categoryService.getCategoryById(Long.valueOf(categoryId));
 
         if(Objects.isNull(category)){
             throw new CategoryNotFoundException("Category not found.");
         }
-        return categoriesMapper.convertToCategoryResponseDTO(category);
+        return categoryMapper.convertToCategoryResponseDTO(category);
     }
 
     @DeleteMapping("/category/{id}")
@@ -83,11 +83,11 @@ public class CategoriesController {
         if(null == categoryId){
             throw new InvalidCategoryIdException("Invalid Product Id.");
         }
-        Categories category = categoriesService.deleteCategoryById(categoryId);
+        Category category = categoryService.deleteCategoryById(categoryId);
 
         if(Objects.isNull(category)){
             throw new CategoryNotFoundException("Category not found.");
         }
-        return categoriesMapper.convertToCategoryResponseDTO(category);
+        return categoryMapper.convertToCategoryResponseDTO(category);
     }
 }

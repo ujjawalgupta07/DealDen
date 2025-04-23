@@ -2,35 +2,35 @@ package com.example.productservice.builder;
 
 import com.example.productservice.dto.response.CategoriesDTO;
 import com.example.productservice.dto.response.CategoryResponseDTO;
-import com.example.productservice.entity.Categories;
+import com.example.productservice.entity.Category;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoriesMapper {
+public class CategoryMapper {
 
     /**
      * Converts the Incoming Object to CategoriesResponseDTO
      *
-     * @param categories : Categories Entity Object
+     * @param category : Categories Entity Object
      * @return CategoriesResponseDTO
      */
-    public CategoryResponseDTO convertToCategoryResponseDTO(Categories categories) {
+    public CategoryResponseDTO convertToCategoryResponseDTO(Category category) {
         return CategoryResponseDTO.builder()
-                .id(categories.getId())
-                .title(categories.getTitle())
+                .id(category.getId())
+                .title(category.getTitle())
                 .build();
     }
 
-    public Categories mapToCategory(CategoriesDTO categoriesDTO){
-        Categories categories =
-                Categories.builder()
+    public Category mapToCategory(CategoriesDTO categoriesDTO){
+        Category category =
+                Category.builder()
                         .title(categoriesDTO.getTitle())
                         .build();
 
         if(null != categoriesDTO.getId()){
-            categories.setId(Long.valueOf(categoriesDTO.getId()));
+            category.setId(Long.valueOf(categoriesDTO.getId()));
         }
 
-        return categories;
+        return category;
     }
 }
