@@ -24,8 +24,8 @@ public class CreateProductRequestDTO {
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero.")
     private BigDecimal price;
 
-    @NotNull(message = "Category Id is required.")
-    private Long categoryId;
+    @NotNull(message = "Category title is required.")
+    private String categoryTitle;
 
     @Size(max = 500)
     private String description;

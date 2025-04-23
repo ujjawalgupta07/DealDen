@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Category findCategoriesByTitleAndIsDeleted(String title, String isDeleted);
-    Category findCategoriesByTitle(String title);
-    Category findCategoriesById(Long id);
+    Category findCategoryByTitleAndIsDeleted(String title, String isDeleted);
+    Category findCategoryByTitle(String title);
+    Category findCategoryById(Long id);
     List<Category> findAllByIsDeleted(String isDeleted);
 
 

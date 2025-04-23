@@ -8,75 +8,65 @@ import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.exception.InvalidCategoryIdException;
 import com.example.productservice.service.interfaces.CategoryService;
-import io.micrometer.common.util.StringUtils;
-import org.apache.coyote.BadRequestException;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
+@RequestMapping("api/v1/categories")
+@Slf4j
 public class CategoryController {
 
     CategoryService categoryService;
-    CategoryMapper categoryMapper;
 
-    public CategoryController(@Qualifier("categoriesServiceImpl") CategoryService categoryService, CategoryMapper categoryMapper) {
+    public CategoryController(@Qualifier("categoriesServiceImpl") CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.categoryMapper = categoryMapper;
     }
 
-    @PostMapping("/category")
-    public CategoryResponseDTO createCategory(@RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
-            throws BadRequestException, CategoryAlreadyExistsException {
+    @PostMapping()
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
+            throws CategoryAlreadyExistsException {
 
-        validateCreateCategoryRequest(createCategoryRequestDTO);
+        log.info("Creating category with title : {} ", createCategoryRequestDTO.getTitle());
         Category category = categoryService.createCategory(createCategoryRequestDTO.getTitle());
 
-        return categoryMapper.convertToCategoryResponseDTO(category);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(CategoryMapper.convertToCategoryResponseDTO(category));
     }
 
-    private void validateCreateCategoryRequest(CreateCategoryRequestDTO createCategoryRequestDTO) throws BadRequestException {
-        if(StringUtils.isBlank(createCategoryRequestDTO.getTitle())) {
-            throw new BadRequestException("Category Title is missing");
-        }
-    }
+    @GetMapping()
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
 
-    @GetMapping("/categories")
-    public List<CategoryResponseDTO> getAllCategories(){
+        log.info("Getting all categories");
         List<Category> categoryList = categoryService.getAllCategories();
 
         if (CollectionUtils.isEmpty(categoryList)) {
             return null;
         }
 
-        List<CategoryResponseDTO> response = new ArrayList<>();
-        for (Category category : categoryList) {
-            response.add(categoryMapper.convertToCategoryResponseDTO(category));
-        }
-
-        return response;
+        return ResponseEntity.ok(CategoryMapper.convertToDTOList(categoryList));
     }
 
-    @GetMapping("/category/{id}")
-    public CategoryResponseDTO getCategoryById(@PathVariable("id") String categoryId)
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
 
+        log.info("Fetching category with id : {}", categoryId);
         if(null == categoryId){
             throw new InvalidCategoryIdException("Invalid Category Id.");
         }
-        Category category = categoryService.getCategoryById(Long.valueOf(categoryId));
+        Category category = categoryService.getCategoryById(categoryId);
 
-        if(Objects.isNull(category)){
-            throw new CategoryNotFoundException("Category not found.");
-        }
-        return categoryMapper.convertToCategoryResponseDTO(category);
+        return ResponseEntity.ok(CategoryMapper.convertToCategoryResponseDTO(category));
     }
 
-    @DeleteMapping("/category/{id}")
+    @DeleteMapping("/{id}")
     public CategoryResponseDTO deleteCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
 
@@ -85,9 +75,6 @@ public class CategoryController {
         }
         Category category = categoryService.deleteCategoryById(categoryId);
 
-        if(Objects.isNull(category)){
-            throw new CategoryNotFoundException("Category not found.");
-        }
-        return categoryMapper.convertToCategoryResponseDTO(category);
+        return CategoryMapper.convertToCategoryResponseDTO(category);
     }
 }

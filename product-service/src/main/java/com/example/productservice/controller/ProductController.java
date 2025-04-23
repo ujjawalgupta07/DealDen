@@ -10,8 +10,12 @@ import com.example.productservice.exception.ProductAlreadyExistsException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.service.interfaces.ProductService;
 import io.micrometer.common.util.StringUtils;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,74 +30,57 @@ import java.util.Objects;
  * 3. Model to DTO Conversion. (Model is returned by Service).
  */
 @RestController
+@RequestMapping("/api/v1/products")
+@Slf4j
 public class ProductController {
 
     ProductService productService;
-    ProductMapper productMapper;
 
-    public ProductController(@Qualifier("selfProductService") ProductService svc, ProductMapper mapper) {
+    public ProductController(@Qualifier("productServiceImpl") ProductService svc) {
         this.productService = svc;
-        this.productMapper = mapper;
     }
 
-    @PostMapping("/product")
-    public ProductResponseDTO createProduct(@RequestBody CreateProductRequestDTO createProductRequestDTO)
-            throws BadRequestException, ProductAlreadyExistsException, CategoryAlreadyExistsException {
+    @PostMapping()
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequestDTO createProductRequestDTO)
+            throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
 
-        validateCreateProductRequest(createProductRequestDTO);
+        log.info("Creating product with title : {} ", createProductRequestDTO.getTitle());
         Product product = productService.createProduct(createProductRequestDTO.getTitle(),
                 createProductRequestDTO.getDescription(),
-                createProductRequestDTO.getCategory(),
+                createProductRequestDTO.getCategoryTitle(),
                 createProductRequestDTO.getPrice(),
                 createProductRequestDTO.getImage());
 
-        return productMapper.convertToProductResponseDTO(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProductMapper.convertToProductResponseDTO(product));
     }
 
-    private void validateCreateProductRequest(CreateProductRequestDTO createProductRequestDTO)
-            throws BadRequestException {
-        if(StringUtils.isBlank(createProductRequestDTO.getTitle())) {
-            throw new BadRequestException("Product Title is missing");
-        }
-        if(StringUtils.isBlank(createProductRequestDTO.getDescription())) {
-            throw new BadRequestException("Product Description is missing");
-        }
-        if(StringUtils.isBlank(createProductRequestDTO.getPrice())) {
-            throw new BadRequestException("Product Price is missing");
-        }
-    }
+    @GetMapping()
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
 
-    @GetMapping("/products")
-    public List<ProductResponseDTO> getAllProducts(){
+        log.info("Fetching all products");
         List<Product> productList = productService.getAllProducts();
         if (CollectionUtils.isEmpty(productList)) {
             return null;
         }
 
-        List<ProductResponseDTO> response = new ArrayList<>();
-        for (Product product : productList) {
-            response.add(productMapper.convertToProductResponseDTO(product));
-        }
-
-        return response;
+        return ResponseEntity.ok(ProductMapper.convertToProductResponseDTOList(productList));
     }
 
-    @GetMapping("/product/{id}")
-    public ProductResponseDTO getProductById(@PathVariable("id") String productId)
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long productId)
             throws ProductNotFoundException, InvalidProductIdException {
 
+        log.info("Fetching product with id : {}", productId);
         if(null == productId){
            throw new InvalidProductIdException("Invalid Product Id.");
         }
-        Product product = productService.getProductById(Long.valueOf(productId));
 
-        if(Objects.isNull(product)){
-            throw new ProductNotFoundException("Product not found.");
-        }
-        return productMapper.convertToProductResponseDTO(product);
+        Product product = productService.getProductById(productId);
+
+        return ResponseEntity.ok(ProductMapper.convertToProductResponseDTO(product));
     }
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/{id}")
     public ProductResponseDTO deleteProductById(@PathVariable("id") Long productId)
             throws InvalidProductIdException, ProductNotFoundException {
 
@@ -105,6 +92,6 @@ public class ProductController {
         if(Objects.isNull(product)){
             throw new ProductNotFoundException("Product not found.");
         }
-        return productMapper.convertToProductResponseDTO(product);
+        return ProductMapper.convertToProductResponseDTO(product);
     }
 }

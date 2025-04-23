@@ -2,7 +2,9 @@ package com.example.productservice.service.impl;
 
 
 import com.example.productservice.entity.Category;
+import com.example.productservice.enums.DeletedStatus;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
+import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.service.interfaces.CategoryService;
 import org.springframework.stereotype.Service;
@@ -23,20 +25,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategoryById(Long id) {
-        Category category = categoryRepository.findCategoriesById(id);
+    public Category getCategoryById(Long id) throws CategoryNotFoundException {
+        Category category = categoryRepository.findCategoryById(id);
         if(Objects.nonNull(category)){
             return category;
         }
-        return null;
+
+        throw new CategoryNotFoundException("Category with id : '" + id + "' not found.");
     }
 
     @Override
     public Category createCategory(String title) throws CategoryAlreadyExistsException {
 
-        Category existingCategory = categoryRepository.findCategoriesByTitle(title);
+        Category existingCategory = categoryRepository.findCategoryByTitle(title);
         if(Objects.nonNull(existingCategory)){
-            throw new CategoryAlreadyExistsException("Product with same title already exists");
+            throw new CategoryAlreadyExistsException("Category with same title " + title + " already exists.");
         }
         Category category =
                 Category.builder()
@@ -44,13 +47,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .build();
 
         category.setCreatedAt(LocalDate.now());
-        category.setIsDeleted("N");
+        category.setIsDeleted(DeletedStatus.N.getValue());
         return categoryRepository.save(category);
     }
 
     @Override
     public List<Category> getAllCategories() {
-        List<Category> categoryList = categoryRepository.findAllByIsDeleted("N");
+        List<Category> categoryList = categoryRepository.findAllByIsDeleted(DeletedStatus.N.getValue());
         if(CollectionUtils.isEmpty(categoryList)){
             return new ArrayList<>();
         }
@@ -58,17 +61,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getCategoryByTitle(String title) {
-        Category category = categoryRepository.findCategoriesByTitleAndIsDeleted(title, "N");
+    public Category getCategoryByTitle(String title) throws CategoryNotFoundException {
+        Category category = categoryRepository.findCategoryByTitleAndIsDeleted(title, DeletedStatus.N.getValue());
         if(Objects.nonNull(category)){
             return category;
         }
-        return null;
+        throw new CategoryNotFoundException("Category with title : '" + title + "' not found.");
     }
 
     @Override
     public Category deleteCategoryById(Long categoryId) {
-        Category category = categoryRepository.findCategoriesById(categoryId);
+        Category category = categoryRepository.findCategoryById(categoryId);
 //        if(Objects.nonNull(category)){
 //            return categoriesRepo.updateIsDeletedById(categoryId);
 //        }
