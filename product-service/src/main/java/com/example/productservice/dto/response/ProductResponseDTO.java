@@ -1,19 +1,20 @@
 package com.example.productservice.dto.response;
 
-import com.example.productservice.entity.Categories;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ProductResponseDTO {
 
     private Long id;
     private String title;
     private String description;
-    private Float price;
+    private BigDecimal price;
     private String imageUrl;
-    private Categories category;
+    private CategoryResponseDTO category;
 }

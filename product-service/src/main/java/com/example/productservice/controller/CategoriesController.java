@@ -2,7 +2,7 @@ package com.example.productservice.controller;
 
 import com.example.productservice.builder.CategoriesMapper;
 import com.example.productservice.dto.request.CreateCategoryRequestDTO;
-import com.example.productservice.dto.response.CategoriesResponseDTO;
+import com.example.productservice.dto.response.CategoryResponseDTO;
 import com.example.productservice.entity.Categories;
 import com.example.productservice.exception.CategoryAlreadyExistsException;
 import com.example.productservice.exception.CategoryNotFoundException;
@@ -30,7 +30,7 @@ public class CategoriesController {
     }
 
     @PostMapping("/category")
-    public CategoriesResponseDTO createCategory(@RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
+    public CategoryResponseDTO createCategory(@RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
             throws BadRequestException, CategoryAlreadyExistsException {
 
         validateCreateCategoryRequest(createCategoryRequestDTO);
@@ -46,14 +46,14 @@ public class CategoriesController {
     }
 
     @GetMapping("/categories")
-    public List<CategoriesResponseDTO> getAllCategories(){
+    public List<CategoryResponseDTO> getAllCategories(){
         List<Categories> categoriesList = categoriesService.getAllCategories();
 
         if (CollectionUtils.isEmpty(categoriesList)) {
             return null;
         }
 
-        List<CategoriesResponseDTO> response = new ArrayList<>();
+        List<CategoryResponseDTO> response = new ArrayList<>();
         for (Categories category : categoriesList) {
             response.add(categoriesMapper.convertToCategoryResponseDTO(category));
         }
@@ -62,7 +62,7 @@ public class CategoriesController {
     }
 
     @GetMapping("/category/{id}")
-    public CategoriesResponseDTO getCategoryById(@PathVariable("id") String categoryId)
+    public CategoryResponseDTO getCategoryById(@PathVariable("id") String categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
 
         if(null == categoryId){
@@ -77,7 +77,7 @@ public class CategoriesController {
     }
 
     @DeleteMapping("/category/{id}")
-    public CategoriesResponseDTO deleteCategoryById(@PathVariable("id") Long categoryId)
+    public CategoryResponseDTO deleteCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
 
         if(null == categoryId){
