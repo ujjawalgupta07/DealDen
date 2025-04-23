@@ -2,11 +2,13 @@ package com.example.userservice.service;
 
 import com.example.userservice.entity.Role;
 import com.example.userservice.entity.User;
+import com.example.userservice.repository.RoleRepository;
 import com.example.userservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Set;
 
 @Service
@@ -14,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -27,7 +32,10 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
-        user.setRoles(roles);
+
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        user.setRoles(Collections.singleton(userRole));
 
         // Encode password before saving
 //        user.setPassword(passwordEncoder.encode(password));

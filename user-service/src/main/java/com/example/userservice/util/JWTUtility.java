@@ -4,7 +4,7 @@ import com.example.userservice.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.internal.Function;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +16,11 @@ import java.util.Date;
 @Component
 public class JWTUtility {
 
-    private SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512); // It should be stored in a property or environment variable
+    @Value("${jwt.secret.key}")
+    private String SECRET_KEY;
 
-    private long jwtExpirationInMs = 86400000; // 24 hours
+    @Value("${jwt.expiry.time}")
+    private long jwtExpirationInMs; // 24 hours
 
     public String generateToken(Authentication authentication) {
         User userPrincipal = (User) authentication.getPrincipal();
@@ -28,7 +30,7 @@ public class JWTUtility {
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 
