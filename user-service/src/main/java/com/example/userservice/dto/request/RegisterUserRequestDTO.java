@@ -9,14 +9,21 @@ import lombok.RequiredArgsConstructor;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@RequiredArgsConstructor
 public class RegisterUserRequestDTO {
     private String username;
     private String password;
     private String email;
     private Set<Role> roles;
+
+    public RegisterUserRequestDTO() {
+    }
+
+    public RegisterUserRequestDTO(java.lang.String username, java.lang.String password, java.lang.String email, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
 
     public String getUsername() {
         return username;

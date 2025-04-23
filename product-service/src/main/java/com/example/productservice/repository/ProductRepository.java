@@ -22,8 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Product save(Product p);
 
-    Product updateIsDeletedById(Long id);
-
     Product findProductsByIdAndTitle(Long id, String title);
 
     @Query("select p.id, p.title, p.price from Product p where p.id = :id")

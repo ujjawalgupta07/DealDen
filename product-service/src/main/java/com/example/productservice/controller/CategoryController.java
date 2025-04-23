@@ -9,7 +9,8 @@ import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.exception.InvalidCategoryIdException;
 import com.example.productservice.service.interfaces.CategoryService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/categories")
-@Slf4j
 public class CategoryController {
 
     CategoryService categoryService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
 
     public CategoryController(@Qualifier("categoriesServiceImpl") CategoryService categoryService) {
         this.categoryService = categoryService;
@@ -32,7 +33,7 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
             throws CategoryAlreadyExistsException {
 
-        log.info("Creating category with title : {} ", createCategoryRequestDTO.getTitle());
+        LOGGER.info("Creating category with title : {} ", createCategoryRequestDTO.getTitle());
         Category category = categoryService.createCategory(createCategoryRequestDTO.getTitle());
 
         return ResponseEntity
@@ -43,7 +44,7 @@ public class CategoryController {
     @GetMapping()
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
 
-        log.info("Getting all categories");
+        LOGGER.info("Getting all categories");
         List<Category> categoryList = categoryService.getAllCategories();
 
         if (CollectionUtils.isEmpty(categoryList)) {
@@ -57,7 +58,7 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
 
-        log.info("Fetching category with id : {}", categoryId);
+        LOGGER.info("Fetching category with id : {}", categoryId);
         if(null == categoryId){
             throw new InvalidCategoryIdException("Invalid Category Id.");
         }

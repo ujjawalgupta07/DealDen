@@ -9,10 +9,10 @@ import com.example.productservice.exception.InvalidProductIdException;
 import com.example.productservice.exception.ProductAlreadyExistsException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.service.interfaces.ProductService;
-import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +31,10 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/api/v1/products")
-@Slf4j
 public class ProductController {
 
     ProductService productService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
 
     public ProductController(@Qualifier("productServiceImpl") ProductService svc) {
         this.productService = svc;
@@ -44,7 +44,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequestDTO createProductRequestDTO)
             throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
 
-        log.info("Creating product with title : {} ", createProductRequestDTO.getTitle());
+        LOGGER.info("Creating product with title : {} ", createProductRequestDTO.getTitle());
         Product product = productService.createProduct(createProductRequestDTO.getTitle(),
                 createProductRequestDTO.getDescription(),
                 createProductRequestDTO.getCategoryTitle(),
@@ -57,7 +57,7 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
 
-        log.info("Fetching all products");
+        LOGGER.info("Fetching all products");
         List<Product> productList = productService.getAllProducts();
         if (CollectionUtils.isEmpty(productList)) {
             return null;
@@ -70,7 +70,7 @@ public class ProductController {
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long productId)
             throws ProductNotFoundException, InvalidProductIdException {
 
-        log.info("Fetching product with id : {}", productId);
+        LOGGER.info("Fetching product with id : {}", productId);
         if(null == productId){
            throw new InvalidProductIdException("Invalid Product Id.");
         }

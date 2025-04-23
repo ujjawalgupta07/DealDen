@@ -57,14 +57,12 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductAlreadyExistsException("Product with same title already exists");
         }
 
-        Product product =
-                Product.builder()
-                                .title(productTitle)
-                                .description(description)
-                                .imageUrl(image)
-                                .price(price)
-                                .category(existingCategory)
-                        .build();
+        Product product = new Product();
+        product.setTitle(productTitle);
+        product.setDescription(description);
+        product.setCategory(existingCategory);
+        product.setPrice(price);
+        product.setImageUrl(image);
 
         product.setIsDeleted(DeletedStatus.N.getValue());
         product.setCreatedAt(LocalDate.now());
@@ -83,9 +81,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product deleteProductById(Long productId) {
         Product product = productRepository.findProductsById(productId);
-        if(Objects.nonNull(product)){
-            return productRepository.updateIsDeletedById(productId);
-        }
+//        if(Objects.nonNull(product)){
+//            return productRepository.updateIsDeletedById(productId);
+//        }
         return null;
     }
 }

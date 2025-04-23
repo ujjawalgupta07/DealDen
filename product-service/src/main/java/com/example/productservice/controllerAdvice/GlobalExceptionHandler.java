@@ -21,56 +21,45 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleProductNotFoundException(ProductNotFoundException exception){
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                .code("product_not_found")
-                        .message(exception.getMessage())
-                        .build();
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("product_not_found");
 
         return new ResponseEntity<>(dto, HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidProductIdException.class)
     public ResponseEntity<ErrorDTO> handleInvalidProductIdException(InvalidProductIdException exception){
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                        .code("invalid_product_id")
-                        .message(exception.getMessage())
-                        .build();
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("invalid_product_id");
 
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorDTO> handleInvalidProductIdException(BadRequestException exception){
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                        .code("bad_request")
-                        .message(exception.getMessage())
-                        .build();
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("bad_request");
 
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ProductAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleInvalidProductIdException(ProductAlreadyExistsException exception){
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                        .code("product_already_exists")
-                        .message(exception.getMessage())
-                        .build();
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("product_already_exists");
 
         return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
     }
 
     @ExceptionHandler(CategoryAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleInvalidProductIdException(CategoryAlreadyExistsException exception){
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                        .code("category_already_exists")
-                        .message(exception.getMessage())
-                        .build();
-
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("category_already_exists");
         return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
     }
 
@@ -81,11 +70,9 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
-        ErrorDTO dto =
-                ErrorDTO.builder()
-                        .code("request_validation_failed")
-                        .message(message)
-                        .build();
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(message);
+        dto.setCode("request_validation_failed");
 
         return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
     }

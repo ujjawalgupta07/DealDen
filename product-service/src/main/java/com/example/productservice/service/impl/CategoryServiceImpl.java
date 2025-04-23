@@ -41,10 +41,8 @@ public class CategoryServiceImpl implements CategoryService {
         if(Objects.nonNull(existingCategory)){
             throw new CategoryAlreadyExistsException("Category with same title " + title + " already exists.");
         }
-        Category category =
-                Category.builder()
-                        .title(title)
-                .build();
+        Category category = new Category();
+        category.setTitle(title);
 
         category.setCreatedAt(LocalDate.now());
         category.setIsDeleted(DeletedStatus.N.getValue());

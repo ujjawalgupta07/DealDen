@@ -16,17 +16,15 @@ public class CategoryMapper {
      * @return CategoriesResponseDTO
      */
     public static CategoryResponseDTO convertToCategoryResponseDTO(Category category) {
-        return CategoryResponseDTO.builder()
-                .id(category.getId())
-                .title(category.getTitle())
-                .build();
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
+        categoryResponseDTO.setId(category.getId());
+        categoryResponseDTO.setTitle(category.getTitle());
+        return categoryResponseDTO;
     }
 
     public static Category mapToCategory(CategoriesDTO categoriesDTO){
-        Category category =
-                Category.builder()
-                        .title(categoriesDTO.getTitle())
-                        .build();
+        Category category = new Category();
+        category.setTitle(categoriesDTO.getTitle());
 
         if(null != categoriesDTO.getId()){
             category.setId(Long.valueOf(categoriesDTO.getId()));

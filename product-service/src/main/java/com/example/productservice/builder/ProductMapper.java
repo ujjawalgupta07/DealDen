@@ -18,17 +18,20 @@ public class ProductMapper {
      * @return ProductResponseDTO
      */
     public static ProductResponseDTO convertToProductResponseDTO(Product product) {
-        return ProductResponseDTO.builder()
-                .id(product.getId())
-                .title(product.getTitle())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .imageUrl(product.getImageUrl())
-                .category(CategoryResponseDTO.builder()
-                        .id(product.getCategory().getId())
-                .title(product.getCategory().getTitle())
-                .build())
-                .build();
+
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO();
+        categoryResponseDTO.setId(product.getCategory().getId());
+        categoryResponseDTO.setTitle(product.getCategory().getTitle());
+
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO();
+        productResponseDTO.setId(product.getId());
+        productResponseDTO.setTitle(product.getTitle());
+        productResponseDTO.setDescription(product.getDescription());
+        productResponseDTO.setPrice(product.getPrice());
+        productResponseDTO.setImageUrl(product.getImageUrl());
+        productResponseDTO.setCategory(categoryResponseDTO);
+
+        return productResponseDTO;
     }
 
     public static List<ProductResponseDTO> convertToProductResponseDTOList(List<Product> products) {

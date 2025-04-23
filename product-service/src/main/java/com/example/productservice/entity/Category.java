@@ -10,11 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "categories",
         uniqueConstraints = @UniqueConstraint(columnNames = "title"))
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class Category extends BaseModel {
 
     /**
@@ -30,4 +25,22 @@ public class Category extends BaseModel {
     @OneToMany(mappedBy = "category" , cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
+    public Category() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 }
