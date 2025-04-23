@@ -1,26 +1,33 @@
 package com.example.productservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "categories",
+        uniqueConstraints = @UniqueConstraint(columnNames = "title"))
 @Getter
 @Setter
-@Builder
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Categories extends BaseModel implements Serializable {
+@Builder
+public class Categories extends BaseModel {
+
+    /**
+     * 1. @Builder + @NoArgsConstructor for immutability and clean instantiation
+     * 2. Proper cascade and Orphan Removal setup on OneToMany
+     * 3. Unique Constraint directly on category title
+     *
+     */
 
     private String title;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category" , cascade = {CascadeType.REMOVE})
-    private List<Products> products;
+    @OneToMany(mappedBy = "category" , cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<Products> products = new ArrayList<>();
 
 }

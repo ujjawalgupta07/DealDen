@@ -17,6 +17,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class BaseModel implements Serializable {
 
+    /**
+     * 1. BaseModel for common fields to follow DRY.
+     * 2. Audit support with Spring's @CreatedBy, @LastModifiedDate etc.
+     *
+     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
