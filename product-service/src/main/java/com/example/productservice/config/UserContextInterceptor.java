@@ -26,8 +26,8 @@ public class UserContextInterceptor implements HandlerInterceptor {
             Set<String> roles = Arrays.stream(rolesHeader.split(","))
                     .map(String::trim)
                     .collect(Collectors.toSet());
-            userContext.setUsername(username);
-            userContext.setRoles(roles);
+//            userContext.setUsername(username);
+//            userContext.setRoles(roles);
         }
 
         return true; // allow request to proceed
