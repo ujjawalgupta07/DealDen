@@ -11,14 +11,18 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: user-service
-          uri: lb://USER-SERVICE
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/api/users/**
+            - Path=/api/auth-service/**
+          filters:
+            - RewritePath=/api/auth-service/(?<segment>.*), /api/v1/${segment}}
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/api/products/**
+            - Path=/api/product-service/**
+          filters:
+            - RewritePath=/api/product-service/(?<segment>.*), /api/v1/${segment}}
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
