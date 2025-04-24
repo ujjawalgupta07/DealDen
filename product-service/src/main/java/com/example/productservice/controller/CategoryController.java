@@ -30,9 +30,13 @@ public class CategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestHeader("X-User-Name") String username,
+                                                              @RequestHeader("X-User-Roles") String roles,
+                                                              @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
             throws CategoryAlreadyExistsException {
 
+        System.out.println("USername ===> :: " + username);
+        System.out.println("Roles ===> :: " + roles);
         LOGGER.info("Creating category with title : {} ", createCategoryRequestDTO.getTitle());
         Category category = categoryService.createCategory(createCategoryRequestDTO.getTitle());
 

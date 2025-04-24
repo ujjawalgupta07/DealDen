@@ -1,5 +1,6 @@
 package com.example.productservice.controller;
 
+import com.example.productservice.aop.annotations.IsVendor;
 import com.example.productservice.builder.ProductMapper;
 import com.example.productservice.dto.request.CreateProductRequestDTO;
 import com.example.productservice.dto.response.ProductResponseDTO;
@@ -10,7 +11,6 @@ import com.example.productservice.exception.ProductAlreadyExistsException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.service.interfaces.ProductService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +39,7 @@ public class ProductController {
         this.productService = svc;
     }
 
+    @IsVendor
     @PostMapping()
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequestDTO createProductRequestDTO)
             throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
