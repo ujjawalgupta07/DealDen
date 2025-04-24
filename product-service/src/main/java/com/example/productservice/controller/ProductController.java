@@ -30,7 +30,7 @@ import java.util.Objects;
  * 3. Model to DTO Conversion. (Model is returned by Service).
  */
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/product")
 public class ProductController {
 
     ProductService productService;

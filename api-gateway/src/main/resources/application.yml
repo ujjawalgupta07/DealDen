@@ -16,13 +16,13 @@ spring:
           predicates:
             - Path=/api/auth-service/**
           filters:
-            - RewritePath=/api/auth-service/(?<segment>.*), /api/v1/${segment}}
+            - RewritePath=/api/auth-service/(?<segment>.*), /api/v1/${segment}
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/api/product-service/**
           filters:
-            - RewritePath=/api/product-service/(?<segment>.*), /api/v1/${segment}}
+            - RewritePath=/api/product-service/(?<segment>.*), /api/v1/${segment}
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
@@ -45,3 +45,9 @@ logging:
 jwt:
   secret:
     key: wJalrXUtnFEMIksbdfjhcvhs876bh6875efr556/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+auth:
+  public-paths:
+    - /api/auth-service/auth/login
+    - /api/auth-service/auth/register
+    - actuator/health
