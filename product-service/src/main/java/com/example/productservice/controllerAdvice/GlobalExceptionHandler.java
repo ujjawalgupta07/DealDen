@@ -1,10 +1,7 @@
 package com.example.productservice.controllerAdvice;
 
 import com.example.productservice.dto.response.ErrorDTO;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.InvalidProductIdException;
-import com.example.productservice.exception.ProductAlreadyExistsException;
-import com.example.productservice.exception.ProductNotFoundException;
+import com.example.productservice.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.BadRequestException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -52,7 +49,7 @@ public class GlobalExceptionHandler {
         dto.setMessage(exception.getMessage());
         dto.setCode("product_already_exists");
 
-        return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
+        return new ResponseEntity<>(dto, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(CategoryAlreadyExistsException.class)
@@ -60,7 +57,7 @@ public class GlobalExceptionHandler {
         ErrorDTO dto = new ErrorDTO();
         dto.setMessage(exception.getMessage());
         dto.setCode("category_already_exists");
-        return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
+        return new ResponseEntity<>(dto, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -74,7 +71,24 @@ public class GlobalExceptionHandler {
         dto.setMessage(message);
         dto.setCode("request_validation_failed");
 
-        return new ResponseEntity<>(dto, HttpStatus.ALREADY_REPORTED);
+        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDTO> handleAccessDeniedException(AccessDeniedException exception){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("access_denied");
+        return new ResponseEntity<>(dto, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDTO> handleGeneralException(Exception exception){
+        ErrorDTO dto = new ErrorDTO();
+        dto.setMessage(exception.getMessage());
+        dto.setCode("internal_server_error");
+        return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 }

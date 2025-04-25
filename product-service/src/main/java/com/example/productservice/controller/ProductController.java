@@ -1,5 +1,8 @@
 package com.example.productservice.controller;
 
+import com.example.productservice.aop.annotations.HasAnyRole;
+import com.example.productservice.aop.annotations.IsAdmin;
+import com.example.productservice.aop.annotations.IsUser;
 import com.example.productservice.aop.annotations.IsVendor;
 import com.example.productservice.builder.ProductMapper;
 import com.example.productservice.dto.request.CreateProductRequestDTO;
@@ -39,7 +42,7 @@ public class ProductController {
         this.productService = svc;
     }
 
-    @IsVendor
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
     @PostMapping()
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductRequestDTO createProductRequestDTO)
             throws ProductAlreadyExistsException, CategoryAlreadyExistsException {
@@ -54,6 +57,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ProductMapper.convertToProductResponseDTO(product));
     }
 
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN", "ROLE_USER"})
     @GetMapping()
     public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
 
@@ -66,6 +70,7 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.convertToProductResponseDTOList(productList));
     }
 
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable("id") Long productId)
             throws ProductNotFoundException, InvalidProductIdException {
@@ -80,6 +85,8 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.convertToProductResponseDTO(product));
     }
 
+    @IsVendor
+    @IsAdmin
     @DeleteMapping("/{id}")
     public ProductResponseDTO deleteProductById(@PathVariable("id") Long productId)
             throws InvalidProductIdException, ProductNotFoundException {

@@ -1,49 +1,86 @@
 package com.example.productservice.aop;
 
-import com.example.productservice.aop.annotations.HasAnyRole;
+import com.example.productservice.aop.annotations.*;
+import com.example.productservice.config.PublicEndpointConfig;
 import com.example.productservice.config.UserContext;
+import com.example.productservice.exception.AccessDeniedException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.nio.file.AccessDeniedException;
-import java.util.Arrays;
-import java.util.Set;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Aspect
 @Component
 public class RBACAspect {
 
-    @Autowired
-    private UserContext userContext;
+    private final UserContext userContext;
+    private final PublicEndpointConfig publicEndpointConfig;
 
-    @Before("@annotation(com.example.productservice.aop.annotations.IsAdmin)")
-    public void checkAdmin() throws AccessDeniedException {
-        if (!userContext.hasRole("ADMIN")) {
-            throw new AccessDeniedException("Access denied: ADMIN role required.");
+    public RBACAspect(UserContext userContext, PublicEndpointConfig publicEndpointConfig) {
+        this.userContext = userContext;
+        this.publicEndpointConfig = publicEndpointConfig;
+    }
+
+    private boolean shouldSkipAuth(String requestUri) {
+        return publicEndpointConfig.isPublic(requestUri);
+    }
+
+    private String getRequestUri() {
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attrs.getRequest();
+        return request.getRequestURI();
+    }
+
+    // This method checks the role dynamically based on the annotation
+    private void validateRole(String role) {
+        if (!userContext.hasRole(role)) {
+            throw new AccessDeniedException("Access denied: Required role = " + role);
         }
     }
 
-    @Before("@annotation(com.example.productservice.aop.annotations.IsVendor)")
-    public void checkVendor() throws AccessDeniedException {
-        if (!userContext.hasRole("VENDOR")) {
-            throw new AccessDeniedException("Access denied: VENDOR role required.");
+    // This method checks if the user has one of the required roles
+    private void validateAnyRole(String[] roles) {
+        if (!userContext.hasAnyRole(roles)) {
+            throw new AccessDeniedException("Access denied: Required one of roles = " + String.join(", ", roles));
         }
     }
 
-    @Before("@annotation(com.example.productservice.aop.annotations.IsUser)")
-    public void checkUser() throws AccessDeniedException {
-        if (!userContext.hasRole("USER")) {
-            throw new AccessDeniedException("Access denied: USER role required.");
-        }
+    @Before("@annotation(annotation)")
+    public void checkIsAdmin(JoinPoint joinPoint, IsAdmin annotation) {
+        String uri = getRequestUri();
+        if (shouldSkipAuth(uri)) return;
+        validateRole("ROLE_ADMIN");
     }
 
-    @Before("@annotation(hasAnyRole)")
-    public void checkHasAnyRole(HasAnyRole hasAnyRole) throws AccessDeniedException {
-        if (!userContext.hasAnyRole(hasAnyRole.value())) {
-            throw new AccessDeniedException("Access denied: One of roles " + Arrays.toString(hasAnyRole.value()) + " required.");
-        }
+    @Before("@annotation(annotation)")
+    public void checkIsVendor(JoinPoint joinPoint, IsVendor annotation) {
+        String uri = getRequestUri();
+        if (shouldSkipAuth(uri)) return;
+        validateRole("ROLE_VENDOR");
+    }
+
+    @Before("@annotation(annotation)")
+    public void checkIsUser(JoinPoint joinPoint, IsUser annotation) {
+        String uri = getRequestUri();
+        if (shouldSkipAuth(uri)) return;
+        validateRole("ROLE_USER");
+    }
+
+    @Before("@annotation(annotation)")
+    public void checkHasRole(JoinPoint joinPoint, HasRole annotation) {
+        String uri = getRequestUri();
+        if (shouldSkipAuth(uri)) return;
+        validateRole(annotation.value());
+    }
+
+    @Before("@annotation(annotation)")
+    public void checkHasAnyRole(JoinPoint joinPoint, HasAnyRole annotation) {
+        String uri = getRequestUri();
+        if (shouldSkipAuth(uri)) return;
+        validateAnyRole(annotation.value());
     }
 }
+ 

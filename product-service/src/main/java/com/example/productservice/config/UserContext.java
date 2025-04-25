@@ -1,46 +1,71 @@
 package com.example.productservice.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST,
         proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserContext {
 
-    private final HttpServletRequest request;
+    private static final ThreadLocal<UserDetails> userHolder = new ThreadLocal<>();
 
-    @Autowired
-    public UserContext(HttpServletRequest request) {
-        this.request = request;
+    public static void setUser(String username, List<String> roles) {
+        userHolder.set(new UserDetails(username, roles));
     }
 
-    public String getUsername() {
-        return request.getHeader("X-User-Name");
+    public static String getUsername() {
+        return userHolder.get() != null ? userHolder.get().getUsername() : null;
     }
 
-    public Set<String> getRoles() {
-        String rolesHeader = request.getHeader("X-User-Roles");
-        if (rolesHeader == null) return Set.of();
-        return Arrays.stream(rolesHeader.split(","))
-                .map(String::trim)
-                .collect(Collectors.toSet());
+    public static boolean hasRole(String role) {
+        return userHolder.get() != null && userHolder.get().getRoles().contains(role);
     }
 
-    public boolean hasRole(String role) {
-        return getRoles().contains(role);
+    public static boolean hasAnyRole(String... roles) {
+        if (userHolder.get() == null) return false;
+        for (String role : roles) {
+            if (userHolder.get().getRoles().contains(role)) return true;
+        }
+        return false;
     }
 
-    public boolean hasAnyRole(String... roles) {
-        Set<String> userRoles = getRoles();
-        return Arrays.stream(roles).anyMatch(userRoles::contains);
+    public static void clear() {
+        userHolder.remove();
+    }
+
+    private static class UserDetails {
+        private String username;
+        private List<String> roles;
+
+        public UserDetails() {
+        }
+
+        public UserDetails(String username, List<String> roles) {
+            this.username = username;
+            this.roles = roles;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public List<String> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
+        }
     }
 }
+

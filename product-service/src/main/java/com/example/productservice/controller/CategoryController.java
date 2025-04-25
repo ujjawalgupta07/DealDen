@@ -1,5 +1,9 @@
 package com.example.productservice.controller;
 
+import com.example.productservice.aop.annotations.HasAnyRole;
+import com.example.productservice.aop.annotations.IsAdmin;
+import com.example.productservice.aop.annotations.IsUser;
+import com.example.productservice.aop.annotations.IsVendor;
 import com.example.productservice.builder.CategoryMapper;
 import com.example.productservice.dto.request.CreateCategoryRequestDTO;
 import com.example.productservice.dto.response.CategoryResponseDTO;
@@ -29,6 +33,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @IsVendor
     @PostMapping()
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestHeader("X-User-Name") String username,
                                                               @RequestHeader("X-User-Roles") String roles,
@@ -45,6 +50,7 @@ public class CategoryController {
                 .body(CategoryMapper.convertToCategoryResponseDTO(category));
     }
 
+    @IsUser
     @GetMapping()
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
 
@@ -58,6 +64,7 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryMapper.convertToDTOList(categoryList));
     }
 
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
@@ -71,6 +78,7 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryMapper.convertToCategoryResponseDTO(category));
     }
 
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public CategoryResponseDTO deleteCategoryById(@PathVariable("id") Long categoryId)
             throws InvalidCategoryIdException, CategoryNotFoundException {
