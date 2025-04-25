@@ -3,9 +3,11 @@ package com.example.productservice.config;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@EnableAspectJAutoProxy
 public class ApplicationConfig {
 
     @Bean

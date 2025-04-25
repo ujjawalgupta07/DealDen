@@ -10,8 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -36,12 +35,14 @@ public class AuthService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-        user.setRoles(Collections.singleton(userRole));
+        Set<Role> userRoles = new HashSet<>();
+        for(Role role : roles) {
+            Role userRole = roleRepository.findByName(role.getName())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+            userRoles.add(userRole);
+        }
 
-        // Encode password before saving
-//        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(userRoles);
 
         // Save user
         userRepository.save(user);

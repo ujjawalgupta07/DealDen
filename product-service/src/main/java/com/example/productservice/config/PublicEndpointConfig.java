@@ -12,9 +12,10 @@ import java.util.List;
 @Component
 public class PublicEndpointConfig {
 
+    @Value("${rbac.public-paths}")
     private final List<String> publicPaths;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PublicEndpointConfig.class);
 
     public PublicEndpointConfig(@Value("${rbac.public-paths}") String publicPathsStr) {
         this.publicPaths = Arrays.stream(publicPathsStr.split(","))

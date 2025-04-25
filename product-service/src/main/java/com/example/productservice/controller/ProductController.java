@@ -36,7 +36,7 @@ import java.util.Objects;
 public class ProductController {
 
     ProductService productService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class.getName());
 
     public ProductController(@Qualifier("productServiceImpl") ProductService svc) {
         this.productService = svc;
@@ -85,8 +85,7 @@ public class ProductController {
         return ResponseEntity.ok(ProductMapper.convertToProductResponseDTO(product));
     }
 
-    @IsVendor
-    @IsAdmin
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public ProductResponseDTO deleteProductById(@PathVariable("id") Long productId)
             throws InvalidProductIdException, ProductNotFoundException {

@@ -27,13 +27,13 @@ import java.util.List;
 public class CategoryController {
 
     CategoryService categoryService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class.getName());
 
     public CategoryController(@Qualifier("categoriesServiceImpl") CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-    @IsVendor
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
     @PostMapping()
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestHeader("X-User-Name") String username,
                                                               @RequestHeader("X-User-Roles") String roles,
@@ -50,7 +50,7 @@ public class CategoryController {
                 .body(CategoryMapper.convertToCategoryResponseDTO(category));
     }
 
-    @IsUser
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN", "ROLE_USER"})
     @GetMapping()
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
 

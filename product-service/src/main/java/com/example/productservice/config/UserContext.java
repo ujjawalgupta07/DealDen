@@ -1,33 +1,33 @@
 package com.example.productservice.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 @Component
-@Scope(value = WebApplicationContext.SCOPE_REQUEST,
-        proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserContext {
 
     private static final ThreadLocal<UserDetails> userHolder = new ThreadLocal<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserContext.class.getName());
 
     public static void setUser(String username, List<String> roles) {
+        LOGGER.info("Setting user {} to roles {}", username, roles);
         userHolder.set(new UserDetails(username, roles));
     }
 
     public static String getUsername() {
+        LOGGER.info("Get username from current thread");
         return userHolder.get() != null ? userHolder.get().getUsername() : null;
     }
 
     public static boolean hasRole(String role) {
+        LOGGER.info("Checking if user {} has role {}", getUsername(), role);
         return userHolder.get() != null && userHolder.get().getRoles().contains(role);
     }
 
     public static boolean hasAnyRole(String... roles) {
+        LOGGER.info("Checking if user {} has any role {}", getUsername(), roles);
         if (userHolder.get() == null) return false;
         for (String role : roles) {
             if (userHolder.get().getRoles().contains(role)) return true;
