@@ -1,17 +1,14 @@
 package com.example.productservice.controller;
 
 import com.example.productservice.aop.annotations.HasAnyRole;
-import com.example.productservice.aop.annotations.IsAdmin;
-import com.example.productservice.aop.annotations.IsUser;
-import com.example.productservice.aop.annotations.IsVendor;
 import com.example.productservice.builder.ProductMapper;
 import com.example.productservice.dto.request.CreateProductRequestDTO;
+import com.example.productservice.dto.request.UpdateProductRequestDTO;
+import com.example.productservice.dto.request.ValidateProductRequestDTO;
 import com.example.productservice.dto.response.ProductResponseDTO;
+import com.example.productservice.dto.response.ValidateProductResponseDTO;
 import com.example.productservice.entity.Product;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.InvalidProductIdException;
-import com.example.productservice.exception.ProductAlreadyExistsException;
-import com.example.productservice.exception.ProductNotFoundException;
+import com.example.productservice.exception.*;
 import com.example.productservice.service.interfaces.ProductService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -59,7 +56,7 @@ public class ProductController {
 
     @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN", "ROLE_USER"})
     @GetMapping()
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
 
         LOGGER.info("Fetching all products");
         List<Product> productList = productService.getAllProducts();
@@ -76,8 +73,8 @@ public class ProductController {
             throws ProductNotFoundException, InvalidProductIdException {
 
         LOGGER.info("Fetching product with id : {}", productId);
-        if(null == productId){
-           throw new InvalidProductIdException("Invalid Product Id.");
+        if (null == productId) {
+            throw new InvalidProductIdException("Invalid Product Id.");
         }
 
         Product product = productService.getProductById(productId);
@@ -87,17 +84,49 @@ public class ProductController {
 
     @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ProductResponseDTO deleteProductById(@PathVariable("id") Long productId)
+    public ResponseEntity<ProductResponseDTO> deleteProductById(@PathVariable("id") Long productId)
             throws InvalidProductIdException, ProductNotFoundException {
 
-        if(null == productId){
+        if (null == productId) {
             throw new InvalidProductIdException("Invalid Product Id.");
         }
         Product product = productService.deleteProductById(productId);
 
-        if(Objects.isNull(product)){
+        if (Objects.isNull(product)) {
             throw new ProductNotFoundException("Product not found.");
         }
-        return ProductMapper.convertToProductResponseDTO(product);
+        return ResponseEntity.ok(ProductMapper.convertToProductResponseDTO(product));
     }
+
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long productId,
+                                                            @RequestBody @Valid UpdateProductRequestDTO request)
+            throws CategoryNotFoundException, ProductNotFoundException {
+        Product product = productService.updateProduct(
+                productId,
+                request.getTitle(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getImageUrl(),
+                request.getCategoryId()
+        );
+        return ResponseEntity.ok(ProductMapper.convertToProductResponseDTO(product));
+    }
+
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productId) throws ProductNotFoundException {
+        productService.deleteProduct(productId);
+        return ResponseEntity.ok("Product deleted successfully");
+    }
+
+    @HasAnyRole({"ROLE_VENDOR", "ROLE_ADMIN"})
+    @PostMapping("/validate-products")
+    public ResponseEntity<List<ValidateProductResponseDTO>> validateProducts(@RequestBody @Valid ValidateProductRequestDTO request)
+            throws InvalidProductIdException {
+        List<ValidateProductResponseDTO> response = productService.validateProducts(request);
+        return ResponseEntity.ok(response);
+    }
+
 }
