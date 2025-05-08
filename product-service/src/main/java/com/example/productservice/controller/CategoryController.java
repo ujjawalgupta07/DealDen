@@ -37,8 +37,6 @@ public class CategoryController {
                                                               @Valid @RequestBody CreateCategoryRequestDTO createCategoryRequestDTO)
             throws CategoryAlreadyExistsException {
 
-        System.out.println("USername ===> :: " + username);
-        System.out.println("Roles ===> :: " + roles);
         LOGGER.info("Creating category with title : {} ", createCategoryRequestDTO.getTitle());
         Category category = categoryService.createCategory(createCategoryRequestDTO.getTitle());
 

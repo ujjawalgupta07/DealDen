@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
-@FeignClient(name = "product-service", path = "/api/products")
+@FeignClient(name = "product-service", path = "/api/v1/product")
 public interface ProductServiceClient {
 
-    @PostMapping("/validate")
-    List<ValidateProductResponseDTO> validateProducts(List<Long> productIds);
+    @PostMapping("/validate-products")
+    List<ValidateProductResponseDTO> validateProducts(ValidateProductRequestDTO validateProductRequestDTO);
 }

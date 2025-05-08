@@ -2,6 +2,7 @@ package com.example.orderservice.service.impl;
 
 import com.example.orderservice.config.ProductServiceClient;
 import com.example.orderservice.dto.request.CreateOrderItemRequestDTO;
+import com.example.orderservice.dto.request.ValidateProductRequestDTO;
 import com.example.orderservice.dto.response.ValidateProductResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
@@ -18,12 +19,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final ProductServiceClient productServiceClient;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+
+    public OrderServiceImpl(ProductServiceClient productServiceClient, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+        this.productServiceClient = productServiceClient;
+        this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+    }
 
     @Override
     @Transactional
@@ -33,8 +39,11 @@ public class OrderServiceImpl implements OrderService {
                 .distinct()
                 .collect(Collectors.toList());
 
+        ValidateProductRequestDTO validateProductRequestDTO = new ValidateProductRequestDTO();
+        validateProductRequestDTO.setProductIds(productIds);
+
         // Call product service to validate product IDs
-        List<ValidateProductResponseDTO> validProducts = productServiceClient.validateProducts(productIds);
+        List<ValidateProductResponseDTO> validProducts = productServiceClient.validateProducts(validateProductRequestDTO);
 
         Map<Long, ValidateProductResponseDTO> productMap = validProducts.stream()
                 .collect(Collectors.toMap(ValidateProductResponseDTO::getProductId, p -> p));

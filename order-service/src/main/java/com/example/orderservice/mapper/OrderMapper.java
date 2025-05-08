@@ -4,6 +4,7 @@ import com.example.orderservice.dto.response.CreateOrderItemResponseDTO;
 import com.example.orderservice.dto.response.CreateOrderResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
