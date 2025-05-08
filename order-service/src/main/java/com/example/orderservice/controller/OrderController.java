@@ -4,6 +4,7 @@ import com.example.commons.config.UserContext;
 import com.example.orderservice.dto.request.CreateOrderRequestDTO;
 import com.example.orderservice.dto.response.CreateOrderResponseDTO;
 import com.example.orderservice.entity.Order;
+import com.example.orderservice.exception.InvalidProductIdException;
 import com.example.orderservice.service.interfaces.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,11 @@ import jakarta.validation.Valid;
 public class OrderController {
 
     private final OrderService orderService;
-    @Autowired
     private final UserContext userContext;
     private final ObjectMapper objectMapper;
 
     @PostMapping
-    public ResponseEntity<CreateOrderResponseDTO> placeOrder(@RequestBody @Valid CreateOrderRequestDTO request) {
+    public ResponseEntity<CreateOrderResponseDTO> placeOrder(@RequestBody @Valid CreateOrderRequestDTO request) throws InvalidProductIdException {
         String username = userContext.getUsername();
         Order order = orderService.placeOrder(username, request.getOrderItems(), request.getDeliveryAddress());
         CreateOrderResponseDTO responseDTO = objectMapper.convertValue(order, CreateOrderResponseDTO.class);

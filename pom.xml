@@ -6,27 +6,42 @@
     <artifactId>ecom-microservices-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>service-discovery</module>
         <module>auth-service</module>
         <module>product-service</module>
         <module>order-service</module>
         <module>api-gateway</module>
+        <module>commons</module>
     </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-cloud.version>2024.0.1</spring-cloud.version>
+        <lombok.version>1.18.30</lombok.version>
+        <commons.version>0.0.1-SNAPSHOT</commons.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2022.0.5</version>
+                <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.30</version>
+                <version>${lombok.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ecom</groupId>
+                <artifactId>commons</artifactId>
+                <version>${commons.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -80,11 +80,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.example</groupId>
             <artifactId>commons</artifactId>
+            <groupId>com.ecom</groupId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -1,5 +1,6 @@
 package com.example.orderservice.service.impl;
 
+import com.example.orderservice.config.ProductServiceClient;
 import com.example.orderservice.dto.request.CreateOrderItemRequestDTO;
 import com.example.orderservice.dto.response.ValidateProductResponseDTO;
 import com.example.orderservice.entity.Order;

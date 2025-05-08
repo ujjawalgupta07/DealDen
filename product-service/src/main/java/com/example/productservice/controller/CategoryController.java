@@ -1,7 +1,9 @@
 package com.example.productservice.controller;
 
-import com.example.commons.exception.*;
 import com.example.commons.aop.annotations.HasAnyRole;
+import com.example.commons.exception.CategoryAlreadyExistsException;
+import com.example.commons.exception.CategoryNotFoundException;
+import com.example.commons.exception.InvalidCategoryIdException;
 import com.example.productservice.builder.CategoryMapper;
 import com.example.productservice.dto.request.CreateCategoryRequestDTO;
 import com.example.productservice.dto.response.CategoryResponseDTO;
