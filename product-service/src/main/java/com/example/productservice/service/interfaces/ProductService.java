@@ -3,7 +3,7 @@ package com.example.productservice.service.interfaces;
 import com.example.productservice.dto.request.ValidateProductRequestDTO;
 import com.example.productservice.dto.response.ValidateProductResponseDTO;
 import com.example.productservice.entity.Product;
-import com.example.productservice.exception.*;
+import com.example.commons.exception.*;
 
 import java.math.BigDecimal;
 import java.util.List;

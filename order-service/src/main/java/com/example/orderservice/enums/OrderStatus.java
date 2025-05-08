@@ -2,7 +2,7 @@ package com.example.orderservice.enums;
 
 public enum OrderStatus {
 
-    CREATED,
+    PLACED,
     CANCELLED,
     COMPLETED,
     IN_TRANSIT,

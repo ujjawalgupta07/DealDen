@@ -3,8 +3,8 @@ package com.example.productservice.service.impl;
 
 import com.example.productservice.entity.Category;
 import com.example.productservice.enums.DeletedStatus;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.CategoryNotFoundException;
+import com.example.commons.exception.CategoryAlreadyExistsException;
+import com.example.commons.exception.CategoryNotFoundException;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.service.interfaces.CategoryService;
 import org.springframework.stereotype.Service;

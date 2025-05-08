@@ -6,7 +6,7 @@ import com.example.productservice.dto.response.ValidateProductResponseDTO;
 import com.example.productservice.entity.Category;
 import com.example.productservice.entity.Product;
 import com.example.productservice.enums.DeletedStatus;
-import com.example.productservice.exception.*;
+import com.example.commons.exception.*;
 import com.example.productservice.repository.CategoryRepository;
 import com.example.productservice.repository.ProductRepository;
 import com.example.productservice.service.interfaces.CategoryService;

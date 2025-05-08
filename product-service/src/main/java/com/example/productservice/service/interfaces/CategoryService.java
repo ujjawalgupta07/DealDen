@@ -1,9 +1,8 @@
 package com.example.productservice.service.interfaces;
 
-
 import com.example.productservice.entity.Category;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.CategoryNotFoundException;
+import com.example.commons.exception.CategoryAlreadyExistsException;
+import com.example.commons.exception.CategoryNotFoundException;
 
 import java.util.List;
 

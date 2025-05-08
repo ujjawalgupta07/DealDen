@@ -1,16 +1,11 @@
 package com.example.productservice.controller;
 
-import com.example.productservice.aop.annotations.HasAnyRole;
-import com.example.productservice.aop.annotations.IsAdmin;
-import com.example.productservice.aop.annotations.IsUser;
-import com.example.productservice.aop.annotations.IsVendor;
+import com.example.commons.exception.*;
+import com.example.commons.aop.annotations.HasAnyRole;
 import com.example.productservice.builder.CategoryMapper;
 import com.example.productservice.dto.request.CreateCategoryRequestDTO;
 import com.example.productservice.dto.response.CategoryResponseDTO;
 import com.example.productservice.entity.Category;
-import com.example.productservice.exception.CategoryAlreadyExistsException;
-import com.example.productservice.exception.CategoryNotFoundException;
-import com.example.productservice.exception.InvalidCategoryIdException;
 import com.example.productservice.service.interfaces.CategoryService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

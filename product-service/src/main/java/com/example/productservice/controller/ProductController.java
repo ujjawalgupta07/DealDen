@@ -1,6 +1,6 @@
 package com.example.productservice.controller;
 
-import com.example.productservice.aop.annotations.HasAnyRole;
+import com.example.commons.aop.annotations.HasAnyRole;
 import com.example.productservice.builder.ProductMapper;
 import com.example.productservice.dto.request.CreateProductRequestDTO;
 import com.example.productservice.dto.request.UpdateProductRequestDTO;
@@ -8,7 +8,7 @@ import com.example.productservice.dto.request.ValidateProductRequestDTO;
 import com.example.productservice.dto.response.ProductResponseDTO;
 import com.example.productservice.dto.response.ValidateProductResponseDTO;
 import com.example.productservice.entity.Product;
-import com.example.productservice.exception.*;
+import com.example.commons.exception.*;
 import com.example.productservice.service.interfaces.ProductService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
