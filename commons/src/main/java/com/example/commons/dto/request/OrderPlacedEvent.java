@@ -1,4 +1,4 @@
-package com.example.orderservice.kafka.dto;
+package com.example.commons.dto.request;
 
 import java.util.List;
 

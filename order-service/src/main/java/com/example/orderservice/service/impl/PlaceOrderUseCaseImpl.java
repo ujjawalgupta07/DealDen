@@ -2,10 +2,8 @@ package com.example.orderservice.service.impl;
 
 import com.example.commons.config.UserContext;
 import com.example.commons.exception.InvalidProductIdException;
-import com.example.orderservice.controller.OrderController;
 import com.example.orderservice.dto.request.CreateOrderItemRequestDTO;
 import com.example.orderservice.dto.request.CreateOrderRequestDTO;
-import com.example.orderservice.dto.request.ValidateProductRequestDTO;
 import com.example.orderservice.dto.response.ValidateProductResponseDTO;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
@@ -17,7 +15,6 @@ import com.example.orderservice.service.interfaces.ProductValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -18,6 +18,7 @@ public class Product extends BaseModel {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    private Integer quantity;
 
     public Product() {
     }
@@ -60,5 +61,13 @@ public class Product extends BaseModel {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

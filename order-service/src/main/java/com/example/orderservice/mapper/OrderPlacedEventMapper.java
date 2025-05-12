@@ -1,7 +1,7 @@
 package com.example.orderservice.mapper;
 
+import com.example.commons.dto.request.OrderPlacedEvent;
 import com.example.orderservice.entity.Order;
-import com.example.orderservice.kafka.dto.OrderPlacedEvent;
 
 import java.util.List;
 import java.util.stream.Collectors;
